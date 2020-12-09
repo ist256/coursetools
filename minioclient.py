@@ -1,5 +1,4 @@
 from minio import Minio
-from minio.error import ResponseError
 
 class MinioClient(object):
     
