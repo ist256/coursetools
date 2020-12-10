@@ -28,22 +28,23 @@ class NbEnvironment(object):
         self.__filename = self.__find_filename()
         self.__lesson = self.__find_lesson()
         self.__filespec = self.__find_filespec()
-        self.__run_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
+        self.__run_datetime = self.to_datetime_string(datetime.now())
         
         # timezone
         self.__set_timezone("America/New_York")
 
-        # roster
+        # roster and assigments
         self.__roster_df = self.__load_roster()
         self.__assignments_df = self.__load_assignments()
         
-        self.__is_student = self.__find_student()
-        self.__is_instructor = self.__find_instructor()
+        self.__is_student = self.__find_student_netid_on_roster()
+        self.__is_instructor = self.__find_instructor_netid_on_roster()
+        self.__instructor_netid = self.__find_instructor_by_student()
         
         self.__assignment = self.__find_assignment()
-    
-    
-        
+        self.__is_assignment = False if self.__assignment == {} else True
+        self.__assignment_target_file = self.__generate_assignment_target_file()
+            
 
     def __load_roster(self):
         roster_url='metadata/roster.csv'
@@ -76,8 +77,20 @@ class NbEnvironment(object):
         return tmp
     
     @property
+    def assignment_target_file(self):
+        return self.__assignment_target_file
+    
+    @property
     def assignment(self):
         return self.__assignment
+    
+    @property
+    def is_assignment(self):
+        return self.__is_assignment
+    
+    @property
+    def instructor_netid(self):
+        return self.__instructor_netid
 
     @property
     def is_instructor(self):
@@ -133,12 +146,44 @@ class NbEnvironment(object):
     @property 
     def run_datetime(self):
         return self.__run_datetime
+    
+    @property
+    def mc(self):
+        return self.__minio_client
         
-    def __find_student(self):
+    
+    def to_datetime_string(self,date):
+        return date.strftime('%m/%d/%Y %I:%M %p')
+    
+    def to_datetime(self,datestring):
+        return datetime.strptime(datestring, '%m/%d/%Y %I:%M %p')
+    
+    def __generate_assignment_target_file(self):
+        if self.__is_assignment:
+            late = "LATE-" if not self.__assignment['on_time'] else ""
+            filename = f"{late}{self.__netid}.ipynb"
+            return f"{self.__instructor_netid}/{self.__lesson}/{self.__filename}/{filename}"
+        else:
+            return None
+    
+    def __find_student_netid_on_roster(self):
         return self.__find_in_dataframe(dataframe=self.__roster_df, column_number=0, value=self.__netid)
 
-    def __find_instructor(self):
+    def __find_instructor_netid_on_roster(self):
         return self.__find_in_dataframe(dataframe=self.__roster_df, column_number=1, value=self.__netid)
+    
+    def __find_instructor_by_student(self):
+        if self.__is_student:
+            student_column = self.__roster_df.columns[0]
+            instructor_column = self.__roster_df.columns[1]
+            search = self.__roster_df[ self.__roster_df[student_column] ==  self.__netid ]
+            row = search.iloc[0].to_list()
+            return row[1]
+        elif self.__is_instructor:
+            return self.__netid
+        else:
+            return None
+    
     
     def __find_in_dataframe(self, dataframe, column_number, value):
         for val in dataframe.iloc[:,column_number].values:
@@ -159,6 +204,7 @@ class NbEnvironment(object):
         result['gradebook_column'] = row[3]
         result['name'] = row[3].split('|')[0]
         result['duedate'] = row[4]
+        result['on_time'] = self.to_datetime(self.__run_datetime)  <=  self.to_datetime(row[4])
         return result 
     
     def __find_filespec(self):
