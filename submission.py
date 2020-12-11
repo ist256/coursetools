@@ -11,7 +11,7 @@ class Submission:
         try:
             self.env = NbEnvironment()
         except S3Error as e:
-            print(f"{BOMB}ERROR{BOMB} Likely cause: File is not in a course folder.")
+            print(f"ERROR: Likely cause: File is not in a course folder.")
             raise e
         except Exception as e:
             print(e)
