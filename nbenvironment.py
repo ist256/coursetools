@@ -11,7 +11,7 @@ from .settings import Settings
 
 class NbEnvironment(object):
     
-    def __init__(self):
+    def __init__(self, lesson = None, filename = None):
 
         # compositions
         self.__minio_client = MinioClient()
@@ -25,8 +25,8 @@ class NbEnvironment(object):
         self.__course = self.__find_course()
         self.__git_folder = self.__find_git_folder()
         self.__bucket = self.__find_bucket()
-        self.__filename = self.__find_filename()
-        self.__lesson = self.__find_lesson()
+        self.__filename = self.__find_filename() if filename == None else filename
+        self.__lesson = self.__find_lesson() if lesson == None else lesson 
         self.__filespec = self.__find_filespec()
         self.__run_datetime = self.to_datetime_string(datetime.now())
         
