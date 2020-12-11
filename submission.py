@@ -175,7 +175,7 @@ def submit_any():
     submission = Submission()
 
     df = submission.env._NbEnvironment__assignments_df
-    display(df)
+    #display(df)
 
     duedate_col = df.columns[4]
     lesson_col = df.columns[0]
