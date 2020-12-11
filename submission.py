@@ -175,7 +175,7 @@ def submit_any():
     submission = Submission()
 
     df = submission.env._NbEnvironment__assignments_df
-    #display(df)
+    display(df)
 
     duedate_col = df.columns[4]
     lesson_col = df.columns[0]
@@ -188,12 +188,14 @@ def submit_any():
         options=units,
         value=units[0],
         description='Lesson:',
+        layout={'width': 'max-content'},
         disabled=False
     )
 
     assignment_dropdown = widgets.Dropdown(
         options=df[df[lesson_col] == unit_dropdown.value].sort_values(assignment_col)[assignment_col].unique().tolist(),
         description='Assignment:',
+        layout={'width': 'max-content'},
         disabled=False
     )
 
