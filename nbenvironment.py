@@ -48,16 +48,22 @@ class NbEnvironment(object):
 
     def __load_roster(self):
         roster_url='metadata/roster.csv'
-        data = self.__minio_client.get(self.__bucket, roster_url )
-        roster = pd.read_csv(data)
-        # check columns student_netid instructor_netid
-        return roster
+        if self.__minio_client.get_info(self.__bucket, roster_url ) != None:
+            data = self.__minio_client.get(self.__bucket, roster_url )
+            roster = pd.read_csv(data)
+            # check columns student_netid instructor_netid ???
+            return roster
+        else:
+            return pd.DataFrame()
 
     def __load_assignments(self):
-        roster_url='metadata/assignments.csv'
-        data = self.__minio_client.get(self.__bucket, roster_url )
-        assignments = pd.read_csv(data)
-        return assignments
+        assignments_url='metadata/assignments.csv'
+        if self.__minio_client.get_info(self.__bucket, assignments_url ) != None:
+            data = self.__minio_client.get(self.__bucket, assignments_url )
+            assignments = pd.read_csv(data)
+            return assignments
+        else:
+            return pd.DataFrame()
 
     def __set_timezone(self, tz_string):
         self.__timezone = tz_string
@@ -186,6 +192,7 @@ class NbEnvironment(object):
     
     
     def __find_in_dataframe(self, dataframe, column_number, value):
+        if dataframe.empty : return False
         for val in dataframe.iloc[:,column_number].values:
             if val == value:
                 return True
@@ -193,6 +200,7 @@ class NbEnvironment(object):
         
     def __find_assignment(self):
         result = {}
+        if self.__assignments_df.empty: return result
         lesson_column = self.__assignments_df.columns[0]
         assignment_column = self.__assignments_df.columns[1]
         search = self.__assignments_df[ (self.__assignments_df[lesson_column] ==  self.__lesson) & (self.__assignments_df[assignment_column] == self.__filename)]
