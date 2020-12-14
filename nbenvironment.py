@@ -74,7 +74,7 @@ class NbEnvironment(object):
     @property
     def properties(self):
         '''
-        Return all properties as a dictrionary
+        Return all properties as a dictionary
         '''
         tmp = {}
         for key in self.__dict__.keys():
@@ -219,7 +219,11 @@ class NbEnvironment(object):
         return f"{os.environ.get('HOME')}/{self.__notebook_path}"
         
     def __find_bucket(self):
-        return f"{self.__course}-{self.__git_folder}"
+        bucket = f"{self.__course}-{self.__git_folder}"
+        if self.__minio_client.bucket_exists(bucket):
+            return bucket
+        else:
+            return "empty" # default bucket 
             
     def __find_git_folder(self):
         items = self.__notebook_path.split('/')
