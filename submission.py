@@ -200,7 +200,7 @@ def submit_any():
     )
 
     assignment_date = widgets.Text(
-        value=df[ df['name'] == assignment_dropdown.value]['duedate'].values[0],
+        value=df[ df[assignment_col] == assignment_dropdown.value][duedate_col].values[0],
         description='Due Date:',
         disabled=True
     )
