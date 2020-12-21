@@ -41,7 +41,7 @@ class Submission:
         '''        
         from ipywidgets import interact, interactive, fixed, interact_manual
         import ipywidgets as widgets
-        from IPython.display import display, HTML, clear_output
+        from IPython.display import display, HTML, clear_output, Javascript
         
         def on_cancel_button_clicked(b):
             with out:
@@ -80,6 +80,7 @@ class Submission:
         
         target_file = self.env.mc.get_info(self.env.bucket, self.env.assignment_target_file)
         
+       
         content  = "<ul>"
         content += f"<li>Your NetID: <code>{self.env.netid}</code></li>"
         content += f"<li>Instructor NetID: <code>{self.env.netid}</code></li>"
@@ -96,6 +97,8 @@ class Submission:
             content += (f"<li><i class='fa fa-exclamation-circle' aria-hidden='true'></i> Your assignment is a resubmission. You submitted on: <code>{self.env.to_datetime_string(last_mod)}</code>")
             submit_button.description = "Re-" + submit_button.description
         content += "</ul>"
+        # Let's Save!!!
+        display(Javascript("IPython.notebook.save_notebook()"),include=['application/javascript'])        
         display(HTML(f"<h2>{header_text}</h2>"))
         display(HTML(content))
         if save_warning:
