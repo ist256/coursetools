@@ -21,7 +21,20 @@ class Submission:
     def properties(self):
         return self.env.properties
     
+    def submit_now(self,  ui=True, header_text = "Submission Details", save_warning = True):
+        if not self.env.is_assignment:
+            raise Exception(f"ERROR: Thie file {self.env.filename} is not on the assignment list. Please check the assignment you are supposed to submit.")
+            
+        if not self.env.is_student:
+            raise Exception(f"ERROR: Your netid {self.env.netid} does not appear on the {self.env.course} roster.")
+
+        if ui:
+            return self.__ui_submit(header_text = header_text, save_warning = save_warning, ignore_due_date=True)
+        else:
+            return self.__console_submit(header_text = header_text, save_warning = save_warning, ignore_due_date=True)
+        
     
+   
     def submit(self, ui=True, header_text = "Submission Details", save_warning = True):
         if not self.env.is_assignment:
             raise Exception(f"ERROR: Thie file {self.env.filename} is not on the assignment list. Please check the assignment you are supposed to submit.")
@@ -35,7 +48,7 @@ class Submission:
             return self.__console_submit(header_text = header_text, save_warning = save_warning)
     
     
-    def __ui_submit(self, header_text, save_warning):
+    def __ui_submit(self, header_text, save_warning, ignore_due_date=False):
         '''
         Perform a Submission from the UI
         '''        
@@ -56,7 +69,10 @@ class Submission:
                 submit_button.disabled = True
                 cancel_button.disabled = True
                 display(HTML(f"Submitting..."))
-                result = self.env.mc.fput(self.env.bucket,self.env.filespec,self.env.assignment_target_file)
+                if ignore_due_date:
+                    result = self.env.mc.fput(self.env.bucket,self.env.filespec,self.env.assignment_target_file.replace("LATE-","") )
+                else:
+                    result = self.env.mc.fput(self.env.bucket,self.env.filespec,self.env.assignment_target_file)
                 display(HTML(f"Your assignment was submitted! Reciept: <code>{result.etag}</code>"))
                 
                 
@@ -88,10 +104,12 @@ class Submission:
         content += f"<li>Total Points: <code>{self.env.assignment['total_points']}</code></li>"        
         content += f"<li>File You Are Submitting: <code>{self.env.filename}</code></li>"
         content += f"<li>Date/Time of Your Submission: <code>{self.env.run_datetime}</code></li>"
-        content += f"<li>Due Date of the Assignment: <code>{self.env.assignment['duedate'] }</code></li>"
-        if not self.env.assignment['on_time']: 
+        if not ignore_due_date:
+            content += f"<li>Due Date of the Assignment: <code>{self.env.assignment['duedate'] }</code></li>"
+            if not self.env.assignment['on_time']: 
                 content += f"<li><i class='fa fa-exclamation-circle' aria-hidden='true'></i> Your assignment is LATE!</li>"
                 submit_button.description += " Late"
+
         if target_file != None:
             last_mod = target_file.last_modified.astimezone(tz.gettz(self.env.timezone))
             content += (f"<li><i class='fa fa-exclamation-circle' aria-hidden='true'></i> Your assignment is a resubmission. You submitted on: <code>{self.env.to_datetime_string(last_mod)}</code>")
@@ -137,16 +155,18 @@ class Submission:
         print(f"Your Instructor ........ {self.env.instructor_netid}")        
         print(f"Assigment File ......... {self.env.filename}")
         print(f"Submission Date ........ {self.env.run_datetime}")
-        print(f"Assignment Due Date .... {self.env.assignment['duedate']}")
+        if not ignore_due_date:
+            print(f"Assignment Due Date .... {self.env.assignment['duedate']}")
         
-        if not self.env.assignment['on_time']:            
-            print(f"\n{WARN}{WARN}{WARN} WARNING {WARN}{WARN}{WARN} Your Submission is LATE!")
-            print(f"{CAL} Your Submission Date   : {self.env.run_datetime}")
-            print(f"{CAL} Due Date For Assignment: {self.env.assignment['duedate']}")
-            late_confirm = input(f"Submit This Assignment Anyways [y/n] {QUESTION}").lower()
-            if late_confirm == 'n':
-                print(f"{CANCEL} Aborting Submission.")
-                return
+            if not self.env.assignment['on_time']:            
+                print(f"\n{WARN}{WARN}{WARN} WARNING {WARN}{WARN}{WARN} Your Submission is LATE!")
+                print(f"{CAL} Your Submission Date   : {self.env.run_datetime}")
+                print(f"{CAL} Due Date For Assignment: {self.env.assignment['duedate']}")
+                late_confirm = input(f"Submit This Assignment Anyways [y/n] {QUESTION}").lower()
+                if late_confirm == 'n':
+                    print(f"{CANCEL} Aborting Submission.")
+                    return
+                                              
         target_file = self.env.mc.get_info(self.env.bucket, self.env.assignment_target_file)
         if target_file != None:
                 last_mod = target_file.last_modified.astimezone(tz.gettz(self.env.timezone))
@@ -159,7 +179,10 @@ class Submission:
                 
         print(f"\n-={PYTHON}=- SUBMITTING -={PYTHON}=-")
         print(f"{UP} Uploading: {self.env.filename} ==> {self.env.assignment_target_file}")
-        result = self.env.mc.fput(self.env.bucket,self.env.filespec,self.env.assignment_target_file)
+        if ignore_due_date:
+            result = self.env.mc.fput(self.env.bucket,self.env.filespec,self.env.assignment_target_file.replace("LATE-","") )
+        else:
+            result = self.env.mc.fput(self.env.bucket,self.env.filespec,self.env.assignment_target_file)
         print(f"{OK} Done!")
         print(f"{RCPT} Reciept: {result.etag}")
         
