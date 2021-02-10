@@ -99,7 +99,7 @@ class Submission:
        
         content  = "<ul>"
         content += f"<li>Your NetID: <code>{self.env.netid}</code></li>"
-        content += f"<li>Instructor NetID: <code>{self.env.netid}</code></li>"
+        content += f"<li>Instructor NetID: <code>{self.env.instructor_netid}</code></li>"
         content += f"<li>Blackboard Gradebook Assignment Name: <code>{self.env.assignment['name']}</code></li>"        
         content += f"<li>Total Points: <code>{self.env.assignment['total_points']}</code></li>"        
         content += f"<li>File You Are Submitting: <code>{self.env.filename}</code></li>"
