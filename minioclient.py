@@ -1,4 +1,6 @@
 from minio import Minio
+import os
+
 
 class MinioClient(object):
     
@@ -9,6 +11,7 @@ class MinioClient(object):
             'secret' : 'c5977GQW2CHF6wsNG5bK', 
             }
         self.__mc = Minio(minio_credentials['host'], access_key=minio_credentials['key'], secret_key=minio_credentials['secret'], secure=False)
+        #print(minio_credentials)
         
     def bucket_exists(self, bucket_name):
         return self.__mc.bucket_exists(bucket_name)
