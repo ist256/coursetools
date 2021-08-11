@@ -18,9 +18,6 @@ class Settings(object):
             return {}
                 
     def save(self, settings):
-        now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
-        settings['last-update'] = now           
-        print(settings)
         with open(self.__SETTINGS_FILE,"w") as f:
             json.dump(settings,f)
             return 
