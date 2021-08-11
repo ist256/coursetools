@@ -4,7 +4,7 @@ class MinioClient(object):
     
     def __init__(self):
         minio_credentials = {
-            'host' : '10.30.24.123:9000', 
+            'host' : 'minio.cent-su.org:9000', 
             'key' : 'sesuro5pka32vtt',
             'secret' : 'c5977GQW2CHF6wsNG5bK', 
             }
