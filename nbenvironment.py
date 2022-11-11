@@ -8,6 +8,7 @@ import time
 import pandas as pd
 from .minioclient import MinioClient
 from .settings import Settings
+import urllib.parse
 
 class NbEnvironment(object):
     
@@ -247,17 +248,18 @@ class NbEnvironment(object):
         if len(items) >= 2 and items[0] == 'library':
             return items[1]
         else:
-            raise Error('This notebook file must be in a course folder.')
+            raise Exception('This notebook file must be in a course folder.')
             
     def __find_service_prefix(self):
         return os.environ.get('JUPYTERHUB_SERVICE_PREFIX')
 
     def __find_netid(self):
         netid = os.environ.get('JUPYTERHUB_USER')
-        if os.environ.get('JUPYTERHUB_CLIENT_ID').find(netid)>=0 and os.environ.get('JUPYTERHUB_SERVICE_PREFIX').find(netid)>=0:
+        decoded_client_id = urllib.parse.unquote(os.environ.get('JUPYTERHUB_CLIENT_ID'))
+        if decoded_client_id.find(netid)>=0 and os.environ.get('JUPYTERHUB_SERVICE_PREFIX').find(netid)>=0:
             return netid
         else:
-            raise Error('Unable to locate a netid for this user.')
+            raise Exception('Unable to locate a netid for this user.')
             
     def __find_notebook_path(self):
         connection_file = os.path.basename(ipykernel.get_connection_file())
