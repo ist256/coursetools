@@ -12,8 +12,6 @@ import urllib.parse
 
 class NbEnvironment(object):
     
-    version = "20221111a"
-    
     def __init__(self, lesson = None, filename = None):
 
         # compositions
