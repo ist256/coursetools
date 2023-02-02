@@ -4,7 +4,6 @@ from datetime import datetime
 from minio.error import S3Error
 import time 
 
-
 class Submission:
     
     def __init__(self, lesson = None, filename = None):
