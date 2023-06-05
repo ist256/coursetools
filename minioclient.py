@@ -1,18 +1,42 @@
 from minio import Minio
 import os
 
+#You can explore the Console using https://play.min.io:9443. Log in with the following credentials:
+#Username: Q3AM3UQ867SPQQA43P2F
+#Password: zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG
+# 'host': os.environ.get("S3_HOST",'minio.cent-su.org:9000'),
+# 'key': os.environ.get("S3_KEY",'sesuro5pka32vtt'),
+# 'secret': os.environ.get("S3_SECRET",'c5977GQW2CHF6wsNG5bK'),
+
 
 class MinioClient(object):
-    
+
     def __init__(self):
-        minio_credentials = {
-            'host' : 'minio.cent-su.org:9000', 
-            'key' : 'sesuro5pka32vtt',
-            'secret' : 'c5977GQW2CHF6wsNG5bK', 
+        self.__minio_credentials = {
+            'host': os.environ.get("S3_HOST", 'play.min.io:9000'),
+            'key': os.environ.get("S3_KEY", 'Q3AM3UQ867SPQQA43P2F'),
+            'secret': os.environ.get("S3_SECRET", 'zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG'),
+            'secure': os.environ.get("S3_SECURE", True)
             }
-        self.__mc = Minio(minio_credentials['host'], access_key=minio_credentials['key'], secret_key=minio_credentials['secret'], secure=False)
+        self.__mc = Minio(self.__minio_credentials['host'],
+                          access_key=self.__minio_credentials['key'],
+                          secret_key=self.__minio_credentials['secret'],
+                          secure=self.__minio_credentials['secure'])
+
         #print(minio_credentials)
+
+    @property
+    def credentials(self):
+        return self.__minio_credentials
+
+    @property
+    def alias_url(self):
+        proto = "https://" if self.__minio_credentials['secure'] else "http://"
+        return f"{proto}{self.__minio_credentials['host']} {self.__minio_credentials['key']} {self.__minio_credentials['secret']}"
+
+        #https://play.min.io:9000 Q3AM3UQ867SPQQA43P2F zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG
         
+    
     def bucket_exists(self, bucket_name):
         return self.__mc.bucket_exists(bucket_name)
     
@@ -44,3 +68,5 @@ class MinioClient(object):
         info = self.__mc.fget_object(bucket_name, remote_filespec, local_filespec)
         return info
         
+if __name__=='__main__':
+    pass

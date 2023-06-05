@@ -157,7 +157,6 @@ class NbEnvironment(object):
     @property
     def mc(self):
         return self.__minio_client
-        
     
     def to_datetime_string(self,date):
         return date.strftime('%m/%d/%Y %I:%M %p')

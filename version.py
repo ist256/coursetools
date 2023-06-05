@@ -1,4 +1,5 @@
 history = lambda: [
+    {"ver" : "1.1.0-20230605", "text": "Compatabile with python 3.11 and jupyter 3.0+" },
     {"ver" : "1.0.4-20230223", "text": "added demo.smartlights" },
     {"ver" : "1.0.3-20221111", "text": "Added display_dataframes() function." },
     {"ver" : "1.0.2-20221111", "text": "Added versioning support." },
