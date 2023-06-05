@@ -16,7 +16,7 @@ class MinioClient(object):
             'host': os.environ.get("S3_HOST", 'play.min.io:9000'),
             'key': os.environ.get("S3_KEY", 'Q3AM3UQ867SPQQA43P2F'),
             'secret': os.environ.get("S3_SECRET", 'zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG'),
-            'secure': os.environ.get("S3_SECURE", True)
+            'secure': os.environ.get("S3_SECURE", "true").lower() == "true"
             }
         self.__mc = Minio(self.__minio_credentials['host'],
                           access_key=self.__minio_credentials['key'],
