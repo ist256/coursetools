@@ -45,7 +45,6 @@ class NbEnvironment(object):
         self.__assignment = self.__find_assignment()
         self.__is_assignment = False if self.__assignment == {} else True
         self.__assignment_target_file = self.__generate_assignment_target_file()
-            
 
     def __load_roster(self):
         roster_url='metadata/roster.csv'
@@ -70,7 +69,7 @@ class NbEnvironment(object):
         self.__timezone = tz_string
         os.environ['TZ'] = self.__timezone
         time.tzset()
-        
+
 
     @property
     def properties(self):
@@ -82,19 +81,19 @@ class NbEnvironment(object):
             if not key.endswith("_df"):
                 tmp[key.replace('_NbEnvironment__','')] = self.__dict__[key]
         return tmp
-    
+
     @property
     def assignment_target_file(self):
         return self.__assignment_target_file
-    
+
     @property
     def assignment(self):
         return self.__assignment
-    
+
     @property
     def is_assignment(self):
         return self.__is_assignment
-    
+
     @property
     def instructor_netid(self):
         return self.__instructor_netid
@@ -102,31 +101,32 @@ class NbEnvironment(object):
     @property
     def is_instructor(self):
         return self.__is_instructor
-    
+
     @property
     def is_student(self):
         return self.__is_student
+
     @property
     def timezone(self):
         return self.__timezone
-    
-    @property 
+
+    @property
     def settings(self):
         return self.__settings
-    
-    @property 
+
+    @property
     def netid(self):
         return self.__netid
 
-    @property 
+    @property
     def notebook_path(self):
         return self.__notebook_path
 
-    @property 
+    @property
     def service_prefix(self):
         return self.__service_prefix
-    
-    @property 
+
+    @property
     def course(self):
         return self.__course
     

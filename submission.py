@@ -5,7 +5,7 @@ from minio.error import S3Error
 import time 
 
 class Submission:
-    
+
     def __init__(self, lesson = None, filename = None):
         try:
             self.env = NbEnvironment(lesson=lesson, filename=filename)
@@ -182,9 +182,9 @@ def submit_any():
     from datetime import datetime
     from dateutil import parser, tz
     from IPython.display import display, HTML, clear_output
-    
+
     display(HTML(f"<h2>Select Assignment To Submit:</h2>"))
-    
+
     submission = Submission()
 
     df = submission.env._NbEnvironment__assignments_df
@@ -225,7 +225,7 @@ def submit_any():
     )
 
     button = widgets.Button(
-        description="Select Assignment",        
+        description="Select Assignment",
         icon="fa-check",
         button_style='primary',
         disabled = False)
